@@ -9,7 +9,6 @@ output:
     fig_height: 5
     toc_depth: 2
     dev: png
-    
 ---
 
 ```{r setup, include=FALSE}

@@ -1,0 +1,68 @@
+---
+title: "Neural Net (neuralnet) - Multi-label Classification"
+author: 'Holiday Tang'
+date: "| Date: `r Sys.Date()`"
+output:
+  github_document:
+    toc: true
+    fig_width: 7
+    fig_height: 5
+    toc_depth: 2
+    dev: png
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = F, warning = F, comment = NA)
+```
+
+# Reading Data
+
+```{r}
+data = readr::read_csv("wine.csv", col_names = FALSE)
+tibble::glimpse(data)
+names(data) = c("label",
+                  "Alcohol",
+                  "Malic_acid",
+                  "Ash",
+                  "Alcalinity_of_ash",
+                  "Magnesium",
+                  "Total_phenols",
+                  "Flavanoids",
+                  "Nonflavanoid_phenols",
+                  "Proanthocyanins",
+                  "Color_intensity",
+                  "Hue",
+                  "OD280_OD315_of_diluted_wines",
+                  "Proline")
+head(data)
+```
+
+Note:
+
+* Labels identify 3 different wine quality
+
+
+# Basic Visualization
+
+```{r}
+library(ggplot2)
+
+p1 = ggplot(data, aes(x = Alcohol, y = Magnesium, colour = as.factor(label))) +
+    geom_point(size=3) +
+    ggtitle("Wines") +
+  labs(color = "Label")
+p2 = ggplot(data, aes(x = Alcohol, y = Proline, colour = as.factor(label))) +
+    geom_point(size=3) +
+  ggtitle("Wines") +
+  labs(color = "Label")
+
+p1
+
+p2
+```
+
+(More to Come) 
+
+```{r}
+
+```
+
