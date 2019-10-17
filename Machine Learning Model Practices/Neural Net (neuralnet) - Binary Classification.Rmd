@@ -1,0 +1,167 @@
+---
+title: "Insert Title"
+author: 'Holiday Tang'
+date: "| Date: `r Sys.Date()`"
+output:
+  github_document:
+    toc: true
+    fig_width: 7
+    fig_height: 5
+    toc_depth: 2
+    dev: png
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment=NA)
+```
+
+# Reading data
+
+Showing brief summary and the first 10 entries
+
+```{r}
+library(readr)
+data = read_csv("bank_note_data.csv")
+
+tibble::glimpse(data)
+
+names(data)[1:3] = c("Variance", "Skewness", "Kurtosis")
+
+# Class as factor
+
+head(data, 10)
+```
+
+# EDA {.tabset}
+
+## boxplot
+
+```{r}
+library(ggplot2)
+theme_set(theme_minimal())
+library(gridExtra) # grid.arrange(p1, p2, nrow =)
+# boxplot for each variable separated by class
+
+# extracting legend
+get_legend = function(a_ggplot){
+  tmp=ggplot_gtable(ggplot_build(a_ggplot))
+  leg=which(sapply(tmp$grobs, function(x) x$name == "guide-box"))
+  legend = tmp$grobs[[leg]]
+  return(legend)
+}
+
+# Variance - p1
+
+p1 = ggplot(data, aes(x=factor(data$Class,labels = c("Fake", "Real")), y=Variance, fill=factor(data$Class,labels = c("Fake", "Real")))) + 
+  geom_boxplot(width = 0.3) + 
+  ggtitle("Boxplot - Variance") + 
+  labs(x="Class") +
+  theme(legend.position = "none", plot.title = element_text(
+    size = 10, hjust = 0.5, face= "bold"
+  ))
+
+p2 = ggplot(data, aes(x=factor(data$Class,labels = c("Fake", "Real")), y=Skewness, fill=factor(data$Class,labels = c("Fake", "Real")))) +
+  geom_boxplot(width = 0.3) +
+  ggtitle("Boxplot - Skewness") +
+  labs(x="Class") +
+  theme(legend.position = "none", plot.title = element_text(
+    size=10, hjust=0.5, face="bold"
+  ))
+
+p3 = ggplot(data, aes(x=factor(data$Class,labels = c("Fake", "Real")), y=Kurtosis, fill=factor(data$Class,labels = c("Fake", "Real")))) + 
+  geom_boxplot(width = 0.3) +
+  ggtitle("Boxplot - Kurtosis") +
+  labs(x="Class") +
+  theme(legend.position = "none", plot.title = element_text(
+    size=10, hjust=0.5, face="bold"
+  ))
+
+p4 = ggplot(data, aes(x=factor(data$Class,labels = c("Fake", "Real")), y=Entropy, fill=factor(data$Class,labels = c("Fake", "Real")))) + 
+  geom_boxplot(width=0.3) +
+  ggtitle("Boxplot - Entropy") +
+  labs(x = "Class") +
+  theme(plot.title = element_text(
+    size=10, hjust = 0.5, face = "bold"
+  ), legend.title = element_blank(), legend.position = "bottom")
+
+leg = get_legend(p4)
+
+grid.arrange(arrangeGrob(p1,p2,p3,p4 + theme(legend.position = "none")), leg, nrow=2, heights = c(15,1))
+```
+
+## density plot
+
+```{r}
+# extract the mean for each predictors
+library(dplyr)
+
+p1 = ggplot(data, aes(x=Variance, fill=factor(data$Class,labels = c("Fake", "Real")))) +
+  geom_density(alpha=0.4, color="white") + 
+  labs(y="Density", title = "Density - Variance") +
+  theme(legend.position = "none", plot.title=element_text(size=10, hjust=0.5))
+
+p2 = ggplot(data, aes(x=Skewness, fill=factor(data$Class,labels = c("Fake", "Real")))) + 
+  geom_density(alpha=0.4,color="white") +
+  labs(y="Density", title="Density - Skewness")+
+  theme(legend.position = "none", plot.title=element_text(size=10, hjust=0.5))
+
+p3 = ggplot(data, aes(x=Kurtosis, fill=factor(data$Class,labels = c("Fake", "Real"))))+
+  geom_density(alpha=0.4, color="white") +
+  labs(y="Density", title="Density - Kurtosis")+
+  theme(legend.position = "none", plot.title=element_text(size=10, hjust=0.5))
+
+p4 = ggplot(data, aes(x=Entropy, fill=factor(data$Class,labels = c("Fake", "Real")))) + 
+  geom_density(alpha=0.4, color="white") +
+  labs(y="Density", title="Density - Entropy")+
+  theme(legend.position = "bottom", plot.title=element_text(size=10, hjust=0.5), legend.title = element_blank())
+
+leg = get_legend(p4)
+
+grid.arrange(arrangeGrob(p1,p2,p3,p4+theme(legend.position = "none")),leg, nrow=2, heights = c(16,1))
+```
+
+As we can see, variance gives us very good power to distinguish between the two classes
+
+# Train-Test Split
+
+Take a glance at the splitted data
+
+```{r}
+library(caTools)
+
+split = sample.split(data$Class, SplitRatio = .7)
+train=subset(data, split==T)
+test=subset(data, split==F)
+
+str(train)
+str(test)
+```
+
+# Training Model
+
+Training model with 10 hidden layers
+
+```{r}
+library(neuralnet)
+
+n = names(train)
+f=as.formula(paste("Class ~ ", paste(n[!n %in% "Class"], collapse = " + ")))
+model = neuralnet(f, data=train, hidden=10, linear.output = F)
+```
+
+## Apply model on test set
+
+Applying the model on the test set to predict the classes
+
+```{r}
+predictions = compute(model, test[1:4])
+predictions_class = ifelse(predictions$net.result >= 0.5, 1, 0)[,1]
+```
+
+## Model Performance (Confusion Matrix)
+
+```{r}
+knitr::kable(table(test[[5]], predictions_class))
+```
+
+Accuracy is 100% !

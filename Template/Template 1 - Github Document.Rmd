@@ -9,7 +9,12 @@ output:
     fig_height: 5
     toc_depth: 2
     dev: png
+    
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment=NA)
+```
 
 Use includes option to include extra content, for example
 
@@ -56,6 +61,4 @@ github_document:
   fig_height: 5
 ```
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
