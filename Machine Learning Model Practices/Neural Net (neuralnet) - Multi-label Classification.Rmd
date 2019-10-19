@@ -60,9 +60,63 @@ p1
 p2
 ```
 
-(More to Come) 
+##  Principal Component Extraction
 
 ```{r}
+data.pca = prcomp(data[,-1], center=T, scale=T)
+# turn pricipal components into a tibble
+PCs = tibble::as.tibble(data.pca$x)
+PCs = cbind(data$label, PCs)
+names(PCs)[1] = "label"
 
+ggplot(PCs, aes(x=PC1, y=PC2, color=as.factor(label))) +
+  geom_point(size=2) + 
+  labs(x="PC 1", y="PC2", color="Label") +
+  ggtitle("Principal Components 1 & 2") + 
+  theme_bw()
+```
+
+- Looks like PC 1 and PC 2 separate the labels pretty well, so using principal components to fit a model might be worth the efforts 
+
+(also, biplot might be helpful)
+
+
+# Processing
+
+### Encode categorical variables
+
+* `nnet` provides a good function for this
+
+```{r}
+library(nnet)
+
+data = cbind(data[,2:14], 
+             class.ind(as.factor(data$label)))
+
+names(data) = c(names(data[,1:13]), "L1", "L2", "L3")
+head(data)
+```
+
+* L1 = 1, L2 = L3 = 0 means this wine is from label 1, there won't be double-category entry based on the nature of this data set
+
+### Standardize the predictors
+
+Standardize the predictors in the [0-1] interval
+
+```{r}
+maxs = apply(data[,1:13], MARGIN = 2, max)
+mins = apply(data[,1:13], MARGIN = 2, min)
+
+scaled_predictors = scale(data[,1:13], center=mins, scale=maxs-mins)
+scaled_data = cbind(scaled_predictors, data[,-(1:13)])
+```
+
+# Fitting Model
+
+```{r}
+n = names(scaled_data)
+f = as.formula(paste("L1+L2+L3 ~ ",
+                     paste(n[!n %in% c("L1", "L2", "L3")], 
+                           collapse = " + ")))
 ```
 
