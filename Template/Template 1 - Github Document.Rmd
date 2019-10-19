@@ -12,7 +12,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment=NA)
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment=NA, cache=T)
 ```
 
 Use includes option to include extra content, for example

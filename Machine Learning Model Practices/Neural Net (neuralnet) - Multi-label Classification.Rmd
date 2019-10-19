@@ -10,8 +10,12 @@ output:
     toc_depth: 2
     dev: png
 ---
+
+Source - [R-blogger post](https://www.r-bloggers.com/multilabel-classification-with-neuralnet-package/)
+
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message = F, warning = F, comment = NA)
+knitr::opts_chunk$set(echo = T, message = F, warning = F, comment = NA,
+                      cache = T)
 ```
 
 # Reading Data
@@ -114,9 +118,167 @@ scaled_data = cbind(scaled_predictors, data[,-(1:13)])
 # Fitting Model
 
 ```{r}
+# constructing formula
 n = names(scaled_data)
 f = as.formula(paste("L1+L2+L3 ~ ",
                      paste(n[!n %in% c("L1", "L2", "L3")], 
                            collapse = " + ")))
+
+f
 ```
 
+Modeling should be relatively fast to converge unless you did not standardize your data
+
+```{r}
+library(neuralnet)
+nn = neuralnet(f, data = scaled_data, hidden=c(13,10,3), 
+               act.fct = "logistic", linear.output = F,
+               lifesign = "minimal")
+```
+
+Let's see the network
+
+```{r}
+plot(nn, rep="best") # plot not showing without rep="best" on rendered document
+```
+
+(I don't know why it is not showing the full image)
+
+```{r}
+# compute predictions 
+pr.nn = compute(nn, scaled_data[,1:13])
+
+# results
+pr.nn.result = pr.nn$net.result
+
+# convert probabilities to categories
+pr.nn.cat = max.col(pr.nn.result) # max.col(numeric matrix) 
+
+# accuracy
+original_values = max.col(scaled_data[,14:16])
+mean(pr.nn.cat == original_values)
+```
+
+100% - but may involve overfitting since we didn't do any train-test split
+
+# Cross Validation
+
+10-fold cross-validation
+
+```{r}
+# randomize the row-order of the data set
+index = sample(1:nrow(scaled_data), nrow(scaled_data))
+
+scaled_data2 = scaled_data[index,]
+
+# cross validate
+accuracy = NULL
+
+test.start = 1 # initial starting index
+
+for (i in 1:10){
+  
+  if (i<10){
+    test.end = i*18 # ending index for this test sample
+  }
+  else { # set out since number of entries can't be evenly divided by 10
+    test.end = 178
+  }
+  
+  test.ind = test.start:test.end
+  test.set = scaled_data2[test.ind,]
+  train.set = scaled_data2[-test.ind,]
+  
+  # fitting model
+    nn_cv = neuralnet(f, data=train.set, hidden = c(13,10,3),
+                      act.fct = "logistic", linear.output = F)
+    
+    # computing predicted label and original label
+    pr.nn = compute(nn_cv, test.set[,1:13])
+    pr.label = max.col(pr.nn$net.result)
+    original.label = max.col(test.set[,14:16])
+    
+    # computing the accuracy
+    accuracy[i] = mean(pr.label == original.label)
+      
+    if (i<10){
+      test.start = test.end + 1
+    }
+}
+
+mean(accuracy) # cross-validated accuracy
+```
+
+About 98% accuracy.
+
+Fun stuff! But it's not over
+
+Remember the principal components we extracted? Let's use them to build a model this time! 
+
+# Using principal components
+
+```{r}
+PCs = PCs[,2:14] # the first column was label
+
+# standardization
+maxs = apply(PCs, MARGIN = 2, max)
+mins = apply(PCs, MARGIN = 2, min)
+
+scaled_PCs = scale(PCs, center = mins, scale = maxs - mins)
+# binding the dummy-labeled labels to the PCs
+scaled_PCs = cbind(tibble::as.tibble(scaled_PCs), scaled_data[14:16])
+```
+
+Since I have an intuition that this is gonna be good model, so let's dive right into cross-validation
+
+## Cross Validation
+
+```{r}
+# randomize the row-order of the data set
+index = sample(1:nrow(scaled_PCs), nrow(scaled_PCs))
+
+scaled_PCs2 = scaled_PCs[index,]
+
+# cross validate
+accuracy = NULL
+
+test.start = 1 # initial starting index
+
+# need a new formula
+n = names(scaled_PCs2)
+f = as.formula("L1 + L2 + L3 ~ PC1 + PC2 + PC3 + PC4 + PC5 + PC6 + PC7")
+
+for (i in 1:10){
+  
+  if (i<10){
+    test.end = i*18 # ending index for this test sample
+  }
+  else { # set out since number of entries can't be evenly divided by 10
+    test.end = 178
+  }
+  
+  test.ind = test.start:test.end
+  test.set = scaled_PCs2[test.ind,]
+  train.set = scaled_PCs2[-test.ind,]
+  
+  # fitting model
+    nn_cv = neuralnet(f, data=train.set, hidden = c(13,10,3),
+                      act.fct = "logistic", linear.output = F)
+    
+    # computing predicted label and original label
+    pr.nn = compute(nn_cv, test.set[,1:13])
+    pr.label = max.col(pr.nn$net.result)
+    original.label = max.col(test.set[,14:16])
+    
+    # computing the accuracy
+    accuracy[i] = mean(pr.label == original.label)
+      
+    if (i<10){
+      test.start = test.end + 1
+    }
+}
+
+mean(accuracy) # cross-validated accuracy
+```
+
+Only a little less accurate compared to using variables, but with about half the number of predictors. 
