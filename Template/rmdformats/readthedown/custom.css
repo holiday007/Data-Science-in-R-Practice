@@ -1,0 +1,39 @@
+#main .nav-pills > li.active > a,
+#main .nav-pills > li.active > a:hover,
+#main .nav-pills > li.active > a:focus {
+   background-color: #7fffec;
+}
+
+#main .nav-pills > li > a:hover {
+  background-color: #7fffec;
+}
+
+h1,h2,h3,h4,h5,h6,legend{
+    color: #6b6a6a;
+}
+
+#nav-top span.glyphicon {
+  color: #7fffec;
+}
+
+#table-of-contents header{
+    color:#7fffec;
+}
+
+#table-of-contents h2{
+    background-color:#ffa647;
+    color:#00d0fa;
+}
+
+#main a {
+    background-image: linear-gradient(180deg,#4badac,#4badac);
+    color:#00d0fa;
+}
+
+a:hover{
+    color:#7fffec
+}
+
+a:visited{
+    color:#f54025
+}

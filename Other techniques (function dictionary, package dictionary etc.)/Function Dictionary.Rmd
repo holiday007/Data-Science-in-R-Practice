@@ -1,0 +1,23 @@
+---
+title: "Function Libary"
+output: html_notebook
+---
+
+# Finding index based on value
+
+## match - Works for vectors, return only first matches
+
+```{r}
+x <- sample(1:10)
+x
+match(c(4,8),x)
+```
+
+## which - Works for multiple matching
+
+```{r}
+x <- sample(1:4,10,replace=TRUE)
+x
+which(x %in% c(2,4))
+```
+
