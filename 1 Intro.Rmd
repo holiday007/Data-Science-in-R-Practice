@@ -1,0 +1,51 @@
+---
+title: "Introduction"
+author: |
+  | Author: Holiday Tang 
+  | [LinkeDin](https://www.linkedin.com/in/holiday-t/) |  [GitHub](https://github.com/holiday007) | [Kaggle Novice](https://www.kaggle.com/holibae007)
+date: "| Date: `r Sys.Date()`"
+output:
+  github_document:
+    toc: true
+    fig_width: 7
+    fig_height: 5
+    toc_depth: 3
+    dev: png
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment=NA, cache=T)
+```
+
+#### Pending
+
+* Interval Variables and Ratio Variables
+
+
+**Types of Categorical Variables**
+
+* binary
+* multinomial
+* nominal - no natural ordering
+* ordinal
+
+Ordinal variables may lack numerical distances between the levels (unlike interval variables) or meaningful ratios (unlike ratio variables).
+
+## Distributions
+
+### Bernouli
+
+### Binomial
+
+### Multinomial
+
+Notice multiple variables to one distribution
+
+* So multiple variance & existence of covariance
+
+### Poisson
+
+* Mean = Variance = count parameter
+
+
+

@@ -1,0 +1,121 @@
+---
+title: "Neural Net on Numeric Labels"
+author: 'Holiday Tang'
+date: "| Date: `r Sys.Date()`"
+output:
+  github_document:
+    toc: true
+    fig_width: 7
+    fig_height: 5
+    toc_depth: 2
+    dev: png
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning=T, message = T, cache = T)
+```
+
+```{r}
+library(MASS)
+library(tibble)
+Boston = as_tibble(Boston)
+head(Boston)
+```
+
+
+```{r}
+# checking data
+anyNA(Boston)
+```
+
+## Normalizing Data
+
+* Good practice for Neural Network
+ - Otherwise, funky results, or it just won't converge
+
+```{r}
+# Grabbing minimum and maximum values of columns
+maxs = apply(Boston, MARGIN = 2, max)
+mins = apply(Boston, MARGIN = 2, min)
+
+# scale returns a numeric matrix, need to transform back to tibble
+# center = x -> each column is gonna have x subtracted from it
+# scale = x -> each column is gonna be divided by the scale 
+
+scaled_data = scale(Boston, center = mins, scale = maxs - mins)
+scaled_data = as_tibble(scaled_data)
+head(scaled_data)
+
+
+# Splitting Data
+library(caTools)
+split = sample.split(scaled_data$medv, SplitRatio = 0.7)
+train = subset(scaled_data, split == TRUE)
+test = subset(scaled_data, split == FALSE)
+
+head(train)
+```
+
+## Training the model
+
+```{r}
+require(neuralnet)
+
+# extracting column names
+n = names(train)
+f = as.formula(paste("medv ~ ", paste(n[!n %in% "medv"], collapse = " + ")))
+
+# training model
+nn = neuralnet(f, data = train, hidden = c(5,3), linear.output = TRUE)
+
+# linear.output = TRUE for numeric prediction
+# linear.output = FALSE for classification
+
+# plot out neural net
+plot(nn)
+```
+
+## predictions
+
+```{r}
+predicted.nn.values = compute(nn, test[1:13]) # note we use compute
+str(predicted.nn.values)
+
+# undoing the scaling
+true.predictions = predicted.nn.values$net.result * 
+  (max(Boston$medv) - 
+     min(Boston$medv)) + 
+  min(Boston$medv) 
+  
+
+# same on the test data
+test.r = test$medv * 
+  (max(Boston$medv) - 
+     min(Boston$medv)) + 
+  min(Boston$medv) 
+
+MSE.nn = mean((test.r - true.predictions)^2)
+
+MSE.nn
+
+# visualize
+error.df = tibble(test.r, true.predictions)
+head(error.df)
+
+library(ggplot2)
+ggplot(error.df, aes(x = test.r, y = true.predictions)) + 
+  geom_point() + 
+  stat_smooth()
+
+ind = seq(1:nrow(error.df))
+error.df = cbind(error.df, ind)
+
+ggplot(error.df, aes(x = ind)) + 
+  geom_line(aes(y=test.r, color = 'purple')) + 
+  geom_line(aes(y=true.predictions, color = "red"))
+
+ggplot(error.df, aes(x = ind, y=(test.r-true.predictions))) + 
+  geom_line(color = "blue")
+```
+
+
