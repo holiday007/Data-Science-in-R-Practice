@@ -1,0 +1,13 @@
+Reference:
+
+1
+  binomial inference
+  binomial likelihood shape
+  wald CI
+  Score CI
+  Likehood-ratio CI
+  Clopper-Pearson "exact" CI
+  likelihood ratio test
+  pearson chi-square test
+  * CI are for binomial parameter, pi, chance of success
+  

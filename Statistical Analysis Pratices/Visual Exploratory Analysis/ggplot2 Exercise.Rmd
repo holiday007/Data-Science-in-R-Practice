@@ -1,0 +1,375 @@
+---
+title: "ggplot2"
+author: |
+  | Author: Holiday Tang 
+  | [LinkeDin](https://www.linkedin.com/in/holiday-t/) |  [GitHub](https://github.com/holiday007) | [Kaggle Novice](https://www.kaggle.com/holibae007)
+date: "| Date: `r Sys.Date()`"
+output:
+  github_document:
+    toc: true
+    fig_width: 7
+    fig_height: 5
+    toc_depth: 3
+    dev: png
+---
+
+### Replicating exercise from 
+
+[] (https://cedricscherer.netlify.com/2019/08/05/a-ggplot2-tutorial-for-beautiful-plotting-in-r/)
+
+```{r, message=FALSE, warning=FALSE, eval=FALSE}
+packs = c("ggplot2", "ggthemes", "tidyverse", "extrafont", 
+          "cowplot", "grid", "gridExtra", "ggrepel", 
+          "reshape2", "ggforce", "ggridges", "shiny", "patchwork",
+          "readr", "tidyverse", "extrafont")
+
+for (i in length(packs)){
+  if(!require(packs[i], quietly = TRUE)) install.packages(packs[i])
+}
+```
+
+```{r, message = FALSE}
+chic = readr::read_csv("https://raw.githubusercontent.com/Z3tt/R-Tutorials/master/ggplot2/chicago-nmmaps.csv")
+
+tibble::glimpse(chic)
+head(chic, 10)
+```
+
+### elements of ggplot2
+
+* Data
+* Geometries - `geom_`: geometric shape that represents the data
+* Aesthetics - `aes()`: Aesthetics of the geometric and statistical objects, such as color, size, shape, transparency and position
+* Scales `scale_`: Maps between the data and the aesthetic dimensions, such as data range to plot width or factor values to colors.
+* Statistical transformations `stat_`: Statistical summaries of the data, such as quantiles, fitted curves and sums.
+* Coordinate system `coord_`: The transformation used for mapping data coordinates into the plane of the data rectangle.
+* Facets `facet_`: The arrangement of the data into a grid of plots.
+* Visual themes `theme()`: The overall visual defaults of a plot, such as background, grids, axes, default typeface, sizes and colors.
+
+```{r}
+# library(ggplot2)
+library(tidyverse)
+```
+
+```{r}
+# start by defining a plot element
+# ggplot(data = df, aes(x = , y = ,))
+
+(g = ggplot(chic, aes(x=date, y=temp))) 
+#using parentheses while creating an object the object will be printed immediately 
+```
+
+#### Scatterplot
+
+```{r}
+g + geom_point() # scatterplot
+```
+
+```{r}
+g + geom_point(color = 'purple')
+```
+
+##### Setting theme
+
+```{r}
+theme_set(theme_bw())
+
+g + geom_point(color = 'purple')
+```
+
+### Working with Axes
+
+#### Add Axis Labels
+
+* Temperature - degree ~ F 
+
+```{r}
+ggplot(chic, aes(x=date, y=temp)) +
+  geom_point(color='purple') + 
+  labs(x='Year', y=expression(paste('Temperature (', degree ~ F, ')')))
+```
+
+#### Manipulating Labels
+
+* `theme()` - all kinds of elements ()[https://ggplot2.tidyverse.org/reference/theme.html]
+
+```{r}
+ggplot(chic, aes(x=date, y=temp)) +
+  geom_point(color = 'purple') + 
+  labs(x='Year', y='Temperature (°F)') + 
+  theme(axis.title.x = element_text(color = 'red', size = 15, vjust = 1),
+        axis.title.y = element_text(color = 'blue', size = 15, vjust = 1))
+```
+
+* `angle`, `vjust` - adjust position of the text
+
+```{r}
+ggplot(chic, aes(x=date, y=temp)) +
+  geom_point(color='purple') +
+  labs(x="Year", y="Temperature (°F)") + 
+  theme(axis.text.x = element_text(angle = 45, size = 15, vjust = 0.5))
+```
+
+#### Remove Axis Ticks & Tick Text
+
+*`element_blank()` - magic of getting rid of something
+
+```{r}
+ggplot(chic, aes(x=date, y=temp)) + 
+  geom_point(color="purple") + 
+  labs(x="Year", y="Temperature (°F)") + 
+  theme(axis.ticks.y = element_blank(),
+        axis.text.y = element_blank())
+```
+
+#### Limit Axis Range
+
+```{r}
+ggplot(chic, aes(x=date, y=temp)) + 
+  geom_point(color="purple") + 
+  labs(x="Year", y="Temperature (°F)") +
+  ylim(c(0,50))
+```
+
+Alternative:
+
+* `g + scale_x_continuous(limits = c(0, 50))`: remove out-of-range points
+* `g + coord_cartesian(xlim = c(0, 50))` : adjust visible area
+
+#### Force plot to start at origin
+
+```{r}
+chic %>%
+  dplyr::filter(temp>25, o3>20) %>%
+  ggplot(aes(x=temp, y=o3)) + 
+  geom_point(color = "pink") + 
+  labs(x=expression(paste("Temperature higher than 25", degree ~ F, "")), y="Ozone higher than 20 ppb") + 
+  expand_limits(x=0, y=0)
+```
+
+Alternative: `coord_cartesian(xlim = c(0, max(chic_red$temp)), ylim = c(0, max(chic_red$o3)))`
+
+```{r}
+ggplot(chic, aes(x=temp, y=temp + rnorm(nrow(chic), sd=20))) + 
+  geom_point() + 
+  xlim(c(0,100)) + ylim(c(0,150)) +
+  coord_equal()
+```
+
+#### Altering Labels by Function
+
+```{r}
+ggplot(chic, aes(x=date, y=temp)) + 
+  geom_point(color="purple") + 
+  labs(x="Year", y="Temperature (°F)") + 
+  scale_y_continuous(labels = function(x) {return(paste(x, "Degrees Fahrenheit"))})
+```
+
+### Titles
+
+* `ggtitle()`
+
+```{r}
+ggplot(chic, aes(x=date, y=temp)) + 
+  geom_point(color="purple") + 
+  labs(x="Year", y="Temperature (°F)") + 
+  ggtitle("Temperatures in Chicago") 
+```  
+
+* `lab(title = , subtitle = , caption = )`
+
+```{r}
+ggplot(chic, aes(x = date, y = temp)) +
+  geom_point(color = "firebrick") + 
+  labs(x = "Year", y = "Temperature (°F)",
+       title = "Temperatures in Chicago",
+       subtitle = "Seasonal patter of daily temperatures from 1997 to 2001",
+       caption = "Data:NMAPS"
+  )
+```
+
+
+#### Title Manipulation
+
+* Make Title Bold and Add Space at Baseline
+
+```{r}
+ggplot(chic, aes(x = date, y = temp)) +
+  geom_point(color = "firebrick") + 
+  labs(x = "Year", y = "Temperature (°F)", 
+       title = "Temperatures in Chicago") +
+  theme(plot.title = element_text(size=15, face="bold", 
+                                  margin = margin(10,0,8,0)))
+```
+
+##### Position of Title
+
+```{r}
+ggplot(chic, aes(x = date, y = temp)) +
+  geom_point(color = "firebrick") +  
+  labs(x = "Year", y = "Temperature (°F)", 
+       title = "Temperatures in Chicago") + 
+  theme(plot.title = element_text(size = 15, face = 9, hjust = 0.5))
+```
+
+#### Fonts
+
+* `extrafont::font_import()`  
+* `element_text(..., family = ...)`
+
+```{r}
+library(extrafont)
+font_import()
+```
+
+```{r}
+fonts()
+```
+
+```{r}
+ggplot(chic, aes(x=date, y=temp)) + 
+  geom_point(color="purple") + 
+  labs(x="Year", y="Temperature (°F)", title="Temperatures in Chicago") + 
+  theme(plot.title = element_text(size=18, family = "Times New Roman"))
+```
+
+```{r}
+# setting default fonts
+theme_set(theme_bw(base_size = 14, base_family = "Calibri"))
+```
+
+#### Spacing in multi-line text
+
+```{r}
+ggplot(chic, aes(x=date, y=temp)) + 
+  geom_point(color = "purple") + 
+  labs(x="Year", y="Temperature (°F)") + 
+  ggtitle("Temperatures in Chicago\nfrom 1997 to 2001") + # notice \n
+  theme(plot.title = element_text(size=16, face="bold", vjust=1,
+                                  lineheight = 1))
+```
+
+#### Legends
+
+```{r}
+# color code based on factor
+ggplot(chic, aes(x=date, y=temp)) + 
+  geom_point(aes(color = factor(season))) +  # to access variable you got to
+  # put it in aes function
+  labs(x="Year", y="Temperature (°F)")
+```
+
+- `theme(legend.position = "none")`
+- `guides(fill = F)`
+- `scale_fill_discrete(guide = F)`
+
+```{r}
+# turn off legend in theme (function)
+ggplot(chic, aes(x = date, y = temp, color = factor(season))) +
+  geom_point() +
+  labs(x = "Year", y = "Temperature (°F)") + 
+  theme(legend.position = "none")
+```
+
+
+```{r}
+# turn off legen title
+ggplot(chic, aes(x = date, y = temp, color = factor(season))) +
+  geom_point() +
+  labs(x = "Year", y = "Temperature (°F)") + 
+  theme(legend.title = element_blank())
+```
+
+```{r}
+# legend position - top, right, bottom, left
+ggplot(chic, aes(x = date, y = temp, color = factor(season))) +
+  geom_point() +
+  labs(x = "Year", y = "Temperature (°F)") + 
+  theme(legend.position = "top", legend.title = element_blank())
+```
+
+```{r}
+ggplot(chic, aes(x = date, y = temp, color = factor(season))) +
+  geom_point() +
+  labs(x = "Year", y = "Temperature (°F)") + 
+  theme(legend.title = element_text(size=14, color="orange",
+                                    face="bold"))
+```
+
+```{r}
+# change legend title
+ggplot(chic, aes(x = date, y = temp, color = factor(season))) +
+  geom_point() + 
+  labs(x="Year", y="Temperature (°F)", color="Seasons:") 
+```
+
+legend details can be changed by:
+
+* `scale_color_discrete`  
+* `scale_color_continuous`
+
+```{r}
+ggplot(chic, aes(x = date, y = temp, color = factor(season))) +
+  geom_point() +
+  labs(x = "Year", y = "Temperature (°F)") + 
+  theme(legend.title = element_text(color = "chocolate", 
+                                    size = 14, face = "bold")) +
+  scale_color_discrete(name = "Season")
+```
+
+```{r}
+# change order of legend keys
+
+#change the levels of season
+chic$season = factor(chic$season, levels = c("Spring", "Summer",
+                                             "Autumn", "Winter"))
+
+ggplot(chic, aes(x=date, y=temp)) +
+  geom_point(aes(color=season)) + 
+  labs(x = "Year", y = "Temperature (°F)")
+```
+
+```{r}
+# change legend labels
+ggplot(chic, aes(x = date, y = temp, color = season)) +
+  geom_point() +
+  labs(x = "Year", y = "Temperature (°F)", color = "Seasons:") + 
+  theme(legend.title = element_text(color = "chocolate", 
+                                    size = 14, face = 2)) + 
+  scale_color_discrete(labels = c("Mar - May", "Jun - Aug", 
+                                              "Sep - Nov", "Dec - Feb"))
+```
+
+```{r}
+# Change Background Boxes in the Legend
+
+ggplot(chic, aes(x = date, y = temp, color = factor(season))) +
+  geom_point() +
+  labs(x = "Year", y = "Temperature (°F)") + 
+  
+  
+  theme(legend.key = element_rect(fill = NA))
+```
+
+- `legend.key(fill = ...)`
+
+```{r}
+# Change Size of Legend Symbols
+ggplot(chic, aes(x = date, y = temp, color = factor(season))) +
+  geom_point() +
+  labs(x = "Year", y = "Temperature (°F)") + 
+  theme(legend.key = element_rect(fill = NA),
+        legend.title = element_text(color = "chocolate", 
+                                    size = 14, face = 2)) +
+  scale_color_discrete("Seasons:") +
+  
+  
+  guides(color = guide_legend(override.aes = list(size=3)))
+```
+
+* Let’s say you have a point layer and you add a rug plot of the same data. By default, both the points and the “line” end up in the legend like this:
+
+```{r}
+# leave a layer off the legend
+```
+
