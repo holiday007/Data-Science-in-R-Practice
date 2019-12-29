@@ -4,7 +4,7 @@ Author: Holiday Tang
 [LinkeDin](https://www.linkedin.com/in/holiday-t/) |
 [GitHub](https://github.com/holiday007) | [Kaggle
 Novice](https://www.kaggle.com/holibae007)
-| Date: 2019-12-07
+| Date: 2019-12-29
 
   - [Pending](#pending)
   - [Distributions](#distributions)
@@ -13,6 +13,11 @@ Novice](https://www.kaggle.com/holibae007)
       - [Multinomial](#multinomial)
       - [Poisson](#poisson)
   - [Aspects of likelihood](#aspects-of-likelihood)
+  - [Inference](#inference)
+      - [Confidence Intervals](#confidence-intervals)
+  - [Multinomial Inference](#multinomial-inference)
+      - [Likelihood ratio test](#likelihood-ratio-test)
+      - [Score test](#score-test)
 
 #### Pending
 
@@ -39,19 +44,15 @@ variables).
 
 Some mathematical details
 
-$$
-
-$$
-
 ### Binomial
 
 Y: number of successes in n **independent** trials with success
-probability \(\pi\)
+probability ![\\pi](https://latex.codecogs.com/png.latex?%5Cpi "\\pi")
 
 Some mathmetical details
 
-In probability theory, the central limit theorem establishes that, in
-some situations, when independent random variables are added, their
+In probability theory, the **central limit theorem** establishes that,
+in some situations, when independent random variables are added, their
 properly normalized sum tends toward a normal distribution even if the
 original variables themselves are not normally distributed.
 
@@ -59,9 +60,13 @@ original variables themselves are not normally distributed.
 
   - n **idependent** trials,
 
-  - each resulting in one of \(c\) categories,
+  - each resulting in one of ![c](https://latex.codecogs.com/png.latex?c
+    "c") categories,
 
-  - with probabilities \(\pi_1\), …, \(\pi_c\) (which sum to 1)
+  - with probabilities
+    ![\\pi\_1](https://latex.codecogs.com/png.latex?%5Cpi_1 "\\pi_1"),
+    …, ![\\pi\_c](https://latex.codecogs.com/png.latex?%5Cpi_c
+    "\\pi_c") (which sum to 1)
 
 Notice multiple variables to one distribution
 
@@ -77,8 +82,30 @@ Notice multiple variables to one distribution
 
 *Review also normal, chi-square, hyper-geometric distributions*
 
-  - [Chi-Square](https://en.wikipedia.org/wiki/Chi-squared_distribution)  
+  - [Chi-Square](https://en.wikipedia.org/wiki/Chi-squared_distribution)
+    
+      - In probability theory and statistics, the chi-square
+        distribution (also chi-squared or χ2-distribution) with k
+        degrees of freedom is the distribution of a sum of the squares
+        of k independent standard normal random variables. The
+        chi-square distribution is a special case of the gamma
+        distribution and is one of the most widely used probability
+        distributions in inferential statistics, notably in hypothesis
+        testing and in construction of confidence intervals. When it is
+        being distinguished from the more general noncentral chi-square
+        distribution, this distribution is sometimes called the central
+        chi-square distribution.
+
+  - The chi-square distribution is used in the common chi-square tests
+    for goodness of fit of an observed distribution to a theoretical
+    one, the independence of two criteria of classification of
+    qualitative data, and in confidence interval estimation for a
+    population standard deviation of a normal distribution from a sample
+    standard deviation. Many other statistical tests also use this
+    distribution, such as Friedman’s analysis of variance by ranks.
+
   - [Normal](https://en.wikipedia.org/wiki/Normal_distribution)
+
   - [Hyper-geometric](https://en.wikipedia.org/wiki/Hypergeometric_distribution)
 
 ## Aspects of likelihood
@@ -92,13 +119,20 @@ The likelihood function describes a hypersurface whose peak, if it
 exists, represents the combination of model parameter values that
 maximize the probability of drawing the sample obtained.
 
-  - The kernel of \(l(\beta)\) includes only factors that depend on
-    \(\beta\)
+  - The kernel of
+    ![l(\\beta)](https://latex.codecogs.com/png.latex?l%28%5Cbeta%29
+    "l(\\beta)") includes only factors that depend on
+    ![\\beta](https://latex.codecogs.com/png.latex?%5Cbeta "\\beta")
     
-      - \(L(\beta)\) is \(log(l(\beta))\)
+      - ![L(\\beta)](https://latex.codecogs.com/png.latex?L%28%5Cbeta%29
+        "L(\\beta)") is   
+        ![log(l(\\beta))](https://latex.codecogs.com/png.latex?log%28l%28%5Cbeta%29%29
+        "log(l(\\beta))")  
 
-  - For our purposes, \(L(\beta)\) will be well-defined and at least
-    twice continuously diferentiable.
+  - For our purposes,
+    ![L(\\beta)](https://latex.codecogs.com/png.latex?L%28%5Cbeta%29
+    "L(\\beta)") will be well-defined and at least twice continuously
+    diferentiable.
 
   - **Score Function**
     
@@ -116,7 +150,48 @@ maximize the probability of drawing the sample obtained.
         random variable X carries about an unknown parameter
     
     \-typically, the reverse of the fisher’s information is the
-    asymptotic variance of MLE \(\beta\)
+    asymptotic variance / covariance of MLE
+    ![\\beta](https://latex.codecogs.com/png.latex?%5Cbeta "\\beta")
 
-  - (These can be found even when \(L(\beta)\) is known only up to an
-    additive constant.)
+  - (These can be found even when
+    ![L(\\beta)](https://latex.codecogs.com/png.latex?L%28%5Cbeta%29
+    "L(\\beta)") is known only up to an additive constant.)
+
+## Inference
+
+### Confidence Intervals
+
+#### Score Intervals
+
+  - Explicit form at Agresti (1.14)
+
+#### Wald Intervals
+
+  - Not reliable when n is small, or when the expected value is small?
+
+#### Likelihood Intervals
+
+  - No explicit form
+
+#### Clopper-Pearson “exact” CI
+
+  - Agrestic (16.6.1)
+
+#### P-Value
+
+  - mid P-value (P44)
+
+## Multinomial Inference
+
+### Likelihood ratio test
+
+  - “![G^2](https://latex.codecogs.com/png.latex?G%5E2 "G^2")” is a test
+    statistics for LR test
+
+  - converges slower
+
+  - don’t use when n/c \< 5, c is the number of categories
+
+### Score test
+
+  -

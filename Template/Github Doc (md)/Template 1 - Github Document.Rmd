@@ -11,12 +11,20 @@ output:
     fig_height: 5
     toc_depth: 2
     dev: png
+    pandoc_args: --webtex
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment=NA, cache=T)
 
 # install packages
+packs = c()
+
+new.pkg <- packs[!(packs %in% installed.packages())]
+
+if (length(new.pkg)) {
+  install.packages(new.pkg, repos = "http://cran.rstudio.com")
+}
 ```
 
 Use includes option to include extra content, for example

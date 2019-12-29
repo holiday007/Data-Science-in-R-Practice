@@ -11,6 +11,7 @@ output:
     fig_height: 5
     toc_depth: 3
     dev: png
+    pandoc_args: --webtex
 ---
 
 ```{r setup, include=FALSE}
@@ -40,10 +41,6 @@ Ordinal variables may lack numerical distances between the levels (unlike interv
 * 1 trial
 
 Some mathematical details 
-
-$$
-
-$$
 
 ### Binomial
 
@@ -95,7 +92,7 @@ The likelihood function describes a hypersurface whose peak, if it exists, repre
 
 
 * The kernel of $l(\beta)$ includes only factors that depend on $\beta$
-  - $L(\beta)$ is $log(l(\beta))$ 
+  - $L(\beta)$ is \[log(l(\beta))\] 
   
 * For our purposes, $L(\beta)$ will be well-defined and at least twice
 continuously diferentiable.

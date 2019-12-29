@@ -1,0 +1,170 @@
+---
+title: "K Nearest Neighbor (Classification) Practice"
+author: |
+  | Author: Holiday Tang
+  | [LinkeDin](https://www.linkedin.com/in/holiday-t/) |  [GitHub](https://github.com/holiday007) | [Kaggle Novice](https://www.kaggle.com/holibae007)
+date: "Date: `r Sys.Date()`"
+output:
+  github_document:
+    toc: true
+    fig_width: 7
+    fig_height: 5
+    toc_depth: 2
+    dev: png
+    pandoc_args: --webtex
+---
+
+(Note: adopted from *Data Scicence and Machine Learning Bootcamp with R* by *Jose Portilla* from Udemy) 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment=NA, cache=T)
+
+# install packages
+packs = c("ISLR")
+
+new.pkg <- packs[!(packs %in% installed.packages())]
+
+if (length(new.pkg)) {
+  install.packages(new.pkg, repos = "http://cran.rstudio.com")
+}
+```
+
+# Algorithim
+
+Training Algorithm:  
+  
+  - Store all the data
+  
+Prediction Algorithm:
+  
+  1. Calculate distances between x to all data points, x being a new data point
+  2. Sort the distances in ascending order
+  3. Predict the majority label of the "k" closest points (if there is a tie, pick either)
+  
+# K
+
+Choosing a K will affect what class a new point is assigned to
+
+# Pros and Cons
+
+### Pros:
+
+* Very simple
+* Training is trivial
+* Works with any number of classes
+* Easy to add more data
+* Few parameters
+  - K
+  - Distance Metric
+  
+### Cons:
+
+* High prediction costs (sorting is expensive)
+* Not good with high dimensional data (calculation of distance becomes complicated)
+* Does not accommadate (nominal) categorical variables
+
+# Implementation
+
+##### Data 
+
+Official Descriptions:
+
+The data contains 5822 real customer records. Each record consists of 86 variables, containing sociodemographic data (variables 1-43) and product ownership (variables 44-86). The sociodemographic data is derived from zip codes. All customers living in areas with the same zip code have the same sociodemographic attributes. Variable 86 (Purchase) indicates whether the customer purchased a caravan insurance policy. Further information on the individual variables can be obtained at http://www.liacs.nl/~putten/library/cc2000/data.html
+
+
+```{r}
+# get the data
+
+library(ISLR) # for the Caravan data set
+# take a look at the dimension
+dim(Caravan)
+
+# take a look at the first observation
+head(Caravan,1)
+
+# take a look at the response variable
+summary(Caravan$Purchase)
+```
+
+```{r}
+# missing values?
+
+anyNA(Caravan)
+```
+
+**Note: It is important to standardize variables for variables on a larger scale can have a larger influence on the distance**
+
+```{r}
+# to illustrate, let's take a look at the variance of two different variables
+var(Caravan[,1])
+var(Caravan[,2])
+```
+
+
+```{r}
+# standardizing variables
+
+purchase = Caravan[,86]
+
+standardized.Caravan = scale(Caravan[,-86])
+var(standardized.Caravan[,1])
+var(standardized.Caravan[,2])
+```
+
+```{r}
+# Train Test Split (consider catools)
+
+test.index = 1:1000
+test.data = standardized.Caravan[test.index,]
+test.purchase = purchase[test.index]
+
+train.data = standardized.Caravan[-test.index,]
+train.purchase = purchase[-test.index]
+```
+
+```{r}
+# KNN model
+
+library(class) # for KNN function
+set.seed(101)
+
+predicted.purchase = knn(train.data, test.data, train.purchase, k = 1)
+
+head(predicted.purchase)
+```
+
+```{r}
+# model assessment
+
+# misclassification error
+misclass.error = mean(test.purchase != predicted.purchase)
+misclass.error
+```
+
+```{r}
+# choosing K
+
+predicted.purchase = NULL
+error.rate = NULL
+
+for (i in 1:20){
+  set.seed(101)
+  predicted.purchase = knn(train.data, test.data, train.purchase, k = i)
+  error.rate[i] = mean(test.purchase != predicted.purchase)
+}
+
+error.rate
+```
+
+```{r}
+# visualize this
+
+library(ggplot2)
+k.values = 1:20
+error.df = data.frame(error.rate, k.values)
+
+ggplot(error.df, aes(k.values, error.rate)) + 
+  geom_point() +
+  geom_line(lty="dotted", color = "red")
+```
+
