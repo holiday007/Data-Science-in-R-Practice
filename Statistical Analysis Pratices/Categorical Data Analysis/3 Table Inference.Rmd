@@ -1,0 +1,109 @@
+---
+title: "3. TableInference"
+author: "Philip Chan"
+date: "12/11/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## CI for measures of Association
+
+### Odds Ratio
+
+P3
+
+### Difference of proportion
+
+P4
+
+### Relative risk
+
+P5
+
+## Delta Method
+
+- P10
+
+- CI for transformed mean
+
+- Taylor expansion
+  - P12
+  
+- backward transformation to get CI for un-transformed mean
+
+## Testing independence
+
+- amount of non-redundant parameters
+
+### Pearson Chi-Square Test (Score Test)
+
+- Assuming multinomial sample
+
+X^2
+
+- R example - P37
+
+### Likelihood Ratio Chi-Square Test
+
+- Assuming multinomial sample
+
+G^2
+
+- R example: P 38
+
+- X^2 and G^2 asymtotically eqiuvalent under H0
+
+- X^2 tends to have better approx
+
+- both still applies even when row total are fixed
+
+### Homogeneity (indep, binom)
+
+- testing independence si equivalent to testing homogeneity in the indep. binomial model
+
+* score and profile likelihood CI - Agresti (3.2.5, 3.2.6)
+
+## Follow-up
+
+- what is the nature of the dependence?
+
+### Residuals
+
+R example: P39
+
+#### Raw residuals
+
+#### Pearson residuals
+
+- the grand sum is the test stat for Pearson's Chi Test
+
+#### standardized residuals
+
+* if pearson's and standardized exceeds 2, or 3 - suggest a reason for **significant** dependence
+
+#### Partitioning G^2
+
+- P28 -> helps figure out the nature of the dependence
+
+
+## Fisher's Exact Test
+
+- When cell counts are small, X^2 and G^2 are not recommended
+
+- both rows and columns are fixed since it assumes hypergeometric
+
+- Agresti (3.5.3)
+
+- Should I use mid P-value?
+
+
+## Ordinal Variables
+
+- Departure from independence is often monotone, should take advantage of it
+
+- assign scores 
+
+- Agresti (3.4.1)

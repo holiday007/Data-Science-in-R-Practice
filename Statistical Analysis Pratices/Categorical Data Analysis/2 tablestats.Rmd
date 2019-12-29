@@ -1,0 +1,88 @@
+---
+title: "1 tableStats"
+author: "Philip Chan"
+date: "12/11/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Contingency Table
+
+- Joint distribution
+
+- Marginal distribution
+
+- Conditional distribution
+  - sensitivity
+  - specificity
+  
+## Descriptive statsitics
+  - count
+  - margin
+  - densities (joint, marginal, conditional...)
+  - independence
+    - $\pi_j|_i = \pi_{+j}$
+    
+    - implies homogeneity
+    
+# Sampling Models
+
+## Poisson
+  - unknown total
+
+## multinomial
+  - fixed total n
+  
+## independent multinomial
+  - fixed row totals
+
+## hypergeometric
+  - both rows and column totals are fixed
+  
+## More situations
+
+### case-control study
+
+- categories of Y variable have fixed counts
+
+- often retrospective
+
+### prospective
+
+- follow a group of subjects over time
+  - clinical trials
+  - cohort studies 
+  
+  * independent multinomial
+
+### Cross-sectional study
+
+- use multinomial when n fixed
+
+## Measuring Inhomogeneity (Dependence)
+
+- difference of proportion
+
+- relative risk
+
+- odds ratio
+
+- *prospective studies allow all three measures*
+
+- *retrospective studies alloq only odds ratio to be estimated*
+
+
+## Conditional association
+
+- stratification variables
+
+- conditinally independence given Z = k
+  - conditionally indepedence given Z
+  
+- homogeneous association 
+  - not the same as homogeneity
+  
+  - condtional association and marginal association can still be different

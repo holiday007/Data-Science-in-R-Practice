@@ -1,0 +1,43 @@
+---
+title: "Insert Title"
+author: |
+  | Author: Holiday Tang 
+  | [LinkeDin](https://www.linkedin.com/in/holiday-t/) |  [GitHub](https://github.com/holiday007) | [Kaggle Novice](https://www.kaggle.com/holibae007)
+date: "| Date: `r Sys.Date()`"
+output:
+  github_document:
+    toc: true
+    fig_width: 7
+    fig_height: 5
+    toc_depth: 2
+    dev: png
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment=NA, cache=T)
+```
+
+```{r, echo=FALSE}
+# install packages
+```
+
+```{r}
+library(dplyr)
+mtcars.num = select_if(mtcars, is.numeric)
+```
+
+```{r}
+library(ggcorrplot)
+corr = round(cor(mtcars.num),2)
+p.mat = cor_pmat(mtcars.num)
+```
+
+```{r}
+ggcorrplot(corr, type = "lower", lab = T, outline.col = "white") +
+  theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+
+```{r}
+ggcorrplot(corr, type = "lower", lab = T, outline.col = "white", p.mat = p.mat) + theme(axis.text.x = element_text(angle = 60, hjust = 1))
+```
+

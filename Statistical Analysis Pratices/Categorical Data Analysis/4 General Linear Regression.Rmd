@@ -1,0 +1,62 @@
+---
+title: "4. GLM"
+author: "Philip Chan"
+date: "12/11/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# GLM
+
+- a regular linear regression is not suitable for categorical variable, or count
+
+### Components of GLM
+
+- **Random component**: density of $Y_i$ from a natural exponential family
+
+  - $Y_i$'s distribution is completely determined by it's mean
+  - $Var(Y_i)$ is a function of $\mu_i$
+
+- **systematic component**: the linear predictor
+
+
+## Binary regression
+
+### Bernouli distributed
+
+canonical link -> logitstic regression
+- link function 
+  - monotonic, differetiable
+  - identity link
+  - canonical link
+  
+
+### Poisson
+
+canonical link -> loglinear model
+
+recall poisson's relation to the multinomial
+
+
+## Fitting GLM
+
+- usually by maximum likelihood
+
+- explicit solutions exist in some cases, but need numerical methods
+  - Newton-Raphson
+  - Fisher Scoring
+  
+### Grouped data
+
+
+### Probit Link
+
+- F -> continuous and invertible cdf
+- standard normal c.d.f -> probit regression
+- latent variables - Agresti (4.2.6)
+
+
+?? last page

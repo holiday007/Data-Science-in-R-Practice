@@ -1,0 +1,122 @@
+Introduction
+================
+Author: Holiday Tang  
+[LinkeDin](https://www.linkedin.com/in/holiday-t/) |
+[GitHub](https://github.com/holiday007) | [Kaggle
+Novice](https://www.kaggle.com/holibae007)
+| Date: 2019-12-07
+
+  - [Pending](#pending)
+  - [Distributions](#distributions)
+      - [Bernouli](#bernouli)
+      - [Binomial](#binomial)
+      - [Multinomial](#multinomial)
+      - [Poisson](#poisson)
+  - [Aspects of likelihood](#aspects-of-likelihood)
+
+#### Pending
+
+  - Interval Variables and Ratio Variables
+
+**Types of Categorical Variables**
+
+Necessarily discrete
+
+  - binary
+  - multinomial
+  - nominal - no natural ordering
+  - ordinal
+
+Ordinal variables may lack numerical distances between the levels
+(unlike interval variables) or meaningful ratios (unlike ratio
+variables).
+
+## Distributions
+
+### Bernouli
+
+  - 1 trial
+
+Some mathematical details
+
+$$
+
+$$
+
+### Binomial
+
+Y: number of successes in n **independent** trials with success
+probability \(\pi\)
+
+Some mathmetical details
+
+In probability theory, the central limit theorem establishes that, in
+some situations, when independent random variables are added, their
+properly normalized sum tends toward a normal distribution even if the
+original variables themselves are not normally distributed.
+
+### Multinomial
+
+  - n **idependent** trials,
+
+  - each resulting in one of \(c\) categories,
+
+  - with probabilities \(\pi_1\), …, \(\pi_c\) (which sum to 1)
+
+Notice multiple variables to one distribution
+
+  - So multiple variance & existence of covariance
+
+### Poisson
+
+  - for counts with no obvious maximum
+
+  - Mean = Variance = count parameter
+
+  - there is a potential connection between multinomial and poisson (P8)
+
+*Review also normal, chi-square, hyper-geometric distributions*
+
+  - [Chi-Square](https://en.wikipedia.org/wiki/Chi-squared_distribution)  
+  - [Normal](https://en.wikipedia.org/wiki/Normal_distribution)
+  - [Hyper-geometric](https://en.wikipedia.org/wiki/Hypergeometric_distribution)
+
+## Aspects of likelihood
+
+In statistics, the likelihood function (often simply called the
+likelihood) is formed from the joint probability of a sample of data
+given a set of model parameter values; it is viewed and used as a
+function of the parameters given the data sample.
+
+The likelihood function describes a hypersurface whose peak, if it
+exists, represents the combination of model parameter values that
+maximize the probability of drawing the sample obtained.
+
+  - The kernel of \(l(\beta)\) includes only factors that depend on
+    \(\beta\)
+    
+      - \(L(\beta)\) is \(log(l(\beta))\)
+
+  - For our purposes, \(L(\beta)\) will be well-defined and at least
+    twice continuously diferentiable.
+
+  - **Score Function**
+    
+      - expectation = 0
+    
+      - gradient of the log-likelihood function
+    
+      - often asymtotically normal
+
+  - **Fisher Information**
+    
+      - the variance of score function
+    
+      - a way of measuring the amount of information that an observable
+        random variable X carries about an unknown parameter
+    
+    \-typically, the reverse of the fisher’s information is the
+    asymptotic variance of MLE \(\beta\)
+
+  - (These can be found even when \(L(\beta)\) is known only up to an
+    additive constant.)

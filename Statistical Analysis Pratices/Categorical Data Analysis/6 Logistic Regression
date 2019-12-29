@@ -1,0 +1,34 @@
+---
+title: "6 Logistics Regression"
+author: "Philip Chan"
+date: "12/12/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+- beta -> log odds ratio
+
+- median effective level
+
+Other summaries:
+I change in (x) over observed range of x
+I change in (x) between observed upper and lower
+quartiles of x
+I x distance between (x) = 1=4 and (x) = 3=4
+
+- in terms of inference, score and likelihood is considered better approach
+
+- Goodness of fit test
+
+- Hosmer-Lemeshow Test
+
+- deviance based test -> group data, requirements of expected values
+
+- LRT for model comparision is equivalent to testing independence/homogeneity for I x 2 contingency tables
+
+- Test for conditional independence by comparing the Z-only model with the additive (or the saturated) model.
+
+- LRT -> small expected cell counts?

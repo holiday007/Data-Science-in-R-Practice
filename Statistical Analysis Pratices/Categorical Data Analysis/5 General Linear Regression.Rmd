@@ -1,0 +1,95 @@
+---
+title: "5. GLM2"
+author: "Philip Chan"
+date: "12/11/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Wald Inference
+
+- asymtotic covariance comes from fisher's info matrix
+
+## Deviance and goodness of fit
+
+- P8
+
+- Deviance is a LRT Chi-Square test for
+
+  - H0: GLM is correct
+
+- Reject if deviance is large
+
+- for poisson model, we need $\mu_i$ to be sufficiently large
+
+### poisson case
+
+
+### binomial case
+
+- need the success mean and failure mean to be sufficiently large
+
+- never valid for binary responses (ungrouped data)
+
+
+** Instead of deviance, can use a generalized Pearson statistic X2 for a goodness of t test | see Agresti, Sec. 4.5.5 16**
+
+
+## Nested model comparison
+
+- P21
+
+- score test (agresti, 4.5.5)
+
+
+## Confidence invervals 
+
+### profile likelihood CI
+
+- P25
+
+- alternatives: Agresti 3.2.6
+
+
+### Residuals
+
+#### Raw
+
+#### Pearson
+
+#### Deviance
+
+#### Standardized 
+
+
+## Overdispersion
+
+- when var(Y) for the data appears larger than that fitted $\mu_i$ predicts
+
+#### Causes
+
+- heterogeneity among observations (variations in $\mu$ not capture by model)
+
+- lurking variables
+
+- correlations among observations (clustering)
+
+##
+
+- use quasi-likelihood
+
+- disperson parameter
+
+- does not change MLE -> changes the standard errors of them
+
+- variance of standardized residuals?
+
+- binomial over dispersion - Agresti, 4.7.4
+
+- other remedies
+  - Poisson -> negative binomial
+  - beta-binomial
+  - random effects

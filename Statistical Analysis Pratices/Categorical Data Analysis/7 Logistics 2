@@ -1,0 +1,28 @@
+---
+title: "7. Logistics 2"
+author: "Philip Chan"
+date: "12/12/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+- collinearity -> add/remove variables one at a time
+
+- AIC -> P6, equivalent to an adjusted deviance
+
+- Correlation measure
+
+- Likelihood measure
+
+  - likelihood measure is recommended for ungrouped data over grouped data
+  
+- ROC
+  - concordance index (Agresti, P)
+  - how to interpret likelihood measure?
+  
+- If MLE do not exist
+  - don't use wald inference
+  - penalized likelihood

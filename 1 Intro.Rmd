@@ -51,7 +51,7 @@ Y: number of successes in n **independent** trials with success probability $\pi
 
 Some mathmetical details
 
-In probability theory, the central limit theorem establishes that, in some situations, when independent random variables are added, their properly normalized sum tends toward a normal distribution even if the original variables themselves are not normally distributed.
+In probability theory, the **central limit theorem** establishes that, in some situations, when independent random variables are added, their properly normalized sum tends toward a normal distribution even if the original variables themselves are not normally distributed.
 
 
 ### Multinomial
@@ -78,7 +78,12 @@ Notice multiple variables to one distribution
 
 *Review also normal, chi-square, hyper-geometric distributions*
   
-  * [Chi-Square](https://en.wikipedia.org/wiki/Chi-squared_distribution)  
+  * [Chi-Square](https://en.wikipedia.org/wiki/Chi-squared_distribution)
+  
+    - In probability theory and statistics, the chi-square distribution (also chi-squared or χ2-distribution) with k degrees of freedom is the distribution of a sum of the squares of k independent standard normal random variables. The chi-square distribution is a special case of the gamma distribution and is one of the most widely used probability distributions in inferential statistics, notably in hypothesis testing and in construction of confidence intervals. When it is being distinguished from the more general noncentral chi-square distribution, this distribution is sometimes called the central chi-square distribution.
+
+  - The chi-square distribution is used in the common chi-square tests for goodness of fit of an observed distribution to a theoretical one, the independence of two criteria of classification of qualitative data, and in confidence interval estimation for a population standard deviation of a normal distribution from a sample standard deviation. Many other statistical tests also use this distribution, such as Friedman's analysis of variance by ranks.
+  
   * [Normal](https://en.wikipedia.org/wiki/Normal_distribution)
   * [Hyper-geometric](https://en.wikipedia.org/wiki/Hypergeometric_distribution)
   
@@ -109,10 +114,47 @@ continuously diferentiable.
   
   - a way of measuring the amount of information that an observable random variable X carries about an unknown parameter
   
-  -typically, the reverse of the fisher's information is the asymptotic variance of MLE $\beta$
+  -typically, the reverse of the fisher's information is the asymptotic variance / covariance of MLE $\beta$
   
   
   
 * (These can be found even when $L(\beta)$ is known only up
 to an additive constant.)
 
+## Inference
+
+### Confidence Intervals
+
+#### Score Intervals
+
+- Explicit form at Agresti (1.14)
+
+#### Wald Intervals
+
+- Not reliable when n is small, or when the expected value is small?
+
+#### Likelihood Intervals
+
+- No explicit form
+
+#### Clopper-Pearson "exact" CI
+
+- Agrestic (16.6.1)
+
+#### P-Value
+
+- mid P-value (P44)
+
+## Multinomial Inference
+
+### Likelihood ratio test
+
+- "$G^2$" is a test statistics for LR test
+
+- converges slower
+
+- don't use when n/c < 5, c is the number of categories
+
+### Score test
+
+- 
