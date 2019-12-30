@@ -1,0 +1,131 @@
+---
+title: "Insert Title"
+author: |
+  | Author: Holiday Tang 
+  | [LinkeDin](https://www.linkedin.com/in/holiday-t/) |  [GitHub](https://github.com/holiday007) | [Kaggle Novice](https://www.kaggle.com/holibae007)
+date: "| Date: `r Sys.Date()`"
+output:
+  github_document:
+    toc: true
+    fig_width: 7
+    fig_height: 5
+    toc_depth: 2
+    dev: png
+    pandoc_args: --webtex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment=NA, cache=T)
+
+# install packages
+packs = c("rpart", "rpart.plot", "randomForest")
+
+new.pkg <- packs[!(packs %in% installed.packages())]
+
+if (length(new.pkg)) {
+  install.packages(new.pkg, repos = "http://cran.rstudio.com")
+}
+```
+
+(Note: adopted from Udemy course, *Data sicence and machine learning bootcamp with R* by Jose Portilla)
+
+# Introduction to tree methods
+
+**Elements of a decision tree:** (Recursive Partitioning & Regression Trees)
+
+* Nodes: split for the value of certain attribute
+* Edges: outcome of a split to the next node
+
+![Example of decision tree](C:/Users/Dell/Pictures/Random/what-is-a-decision-tree.png)
+
+"Hungry?" is a nodes, "Yes" is an edge. Also, what is a terminal node?
+
+**How to mathematically choose the best splits?**
+
+* Entropy:
+
+* Information Gain:
+
+(Intuition: Choose features that best split data)
+
+# Random forest
+
+**Motivation**:
+
+To improve performance, use many trees with a random sample of features chosen for splitting.
+
+**What is it ?**
+
+* A new random sample of features is chosen for every single tree at every single split
+  - create an ensemble of decision trees using *bootstrap samples* of the training set (aka, sampling from the training set with replacement)
+
+* For classification, $m$ (# of chosen features) is typically chosen to be the square root of $p$ (total # of features )
+
+[what is bagging and boosting?](https://towardsdatascience.com/decision-tree-ensembles-bagging-and-boosting-266a8ba60fd9)
+
+**What is the point?**
+
+* Suppose there is **one very strong feature** in the data set. When use "bagged trees", most of the trees will use that feature as the top split, resulting in an ensemble of smililar trees that are highly correlated (which is undesirable). The problem is, averaging highly correlated quantities does not significantly reduce variance. 
+
+* By randomly leaving out candidate features for each split, Random Forest **decorrelates** the trees, such that the averaging process can reduce the variance of the resulting model.
+
+```{r}
+library(rpart) # for decision trees
+```
+
+#### Data
+
+```{r}
+# data (https://www.kaggle.com/abbasit/kyphosis-dataset)
+Kyphosis = read.csv("kyphosis.csv")
+str(Kyphosis)
+head(Kyphosis)
+```
+
+#### Tree Model
+
+```{r}
+# method = "class" - classification
+tree = rpart(Kyphosis ~., method = "class", data = Kyphosis)
+```
+
+**Examing Results of the Tree Model**
+
+- `printcp(fit)`: display cp table
+- `plotcp(fit)`: plot cross-validation results
+- `rsq.rpart`: plot approx R-squared and relative error for different splits (2 plots). labels are only appropriate for the "anova" method
+- `print(fit)`: print results
+- `summary(fit)`: detailed results including surrogate splits
+- `plot(fit)`: plot decision tree
+- `text(fit)`: label the decision tree plot
+- `post(fit, file =)`: create postscript plot of decision tree
+
+```{r}
+printcp(tree)
+```
+
+
+```{r}
+library(rpart.plot)
+prp(tree, main = "Kyphosis Decision Tree")
+```
+
+#### Random Forest Model
+
+```{r}
+library(randomForest)
+
+rf.model = randomForest(Kyphosis ~., ntree = 500, data = Kyphosis)
+
+rf.model
+```
+
+```{r}
+# confusion matrix
+rf.model$confusion
+```
+
+```{r}
+importance(rf.model)
+```
+
