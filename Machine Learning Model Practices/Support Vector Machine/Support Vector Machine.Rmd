@@ -1,0 +1,119 @@
+---
+title: "Support Vector Machine"
+author: |
+  | Author: Holiday Tang 
+  | [LinkeDin](https://www.linkedin.com/in/holiday-t/) |  [GitHub](https://github.com/holiday007) | [Kaggle Novice](https://www.kaggle.com/holibae007)
+date: "| Date: `r Sys.Date()`"
+output:
+  github_document:
+    toc: true
+    fig_width: 7
+    fig_height: 5
+    toc_depth: 2
+    dev: png
+    pandoc_args: --webtex
+---
+
+(Note: adopted from *Data Scicence and Machine Learning Bootcamp with R* by *Jose Portilla* from Udemy) 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment=NA, cache=T)
+
+# install packages
+packs = c("e1071")
+
+new.pkg <- packs[!(packs %in% installed.packages())]
+
+if (length(new.pkg)) {
+  install.packages(new.pkg, repos = "http://cran.rstudio.com")
+}
+```
+
+# Support Vector Machine
+
+SVM - supervised learning model, associated with algorithms that analyze data and recognize patterns, used for **classification and regression**
+
+An SVM model is a representations of the examples as points in space, mapped so that the examples of separated categories are divided by a clear gap that is as wide as possible. New examples are then mapped to the established space, and predicted to belong to a category based on which side the gap they fall on.
+
+* Non-probabilistic based
+* binary linear classifier
+
+Imagine the labeled traning data below:
+
+![ ](C:\Users\Dell\Pictures\Random\Capture.JPG)
+
+We can intuitively draw an hyperplane to separate the two classes, however, there are many possible ways to do it:
+
+![ ](C:\Users\Dell\Pictures\Random\Capture2.JPG)
+
+We would like to choose a hyperplane that maximizes the margin between classes
+
+The vector points that the margin lines touch are known as Support Vectors.
+
+![ ](C:\Users\Dell\Pictures\Random\Capture2.JPG)
+
+### Non-linear separation? Use "Kernel Trick"
+
+[Kernel Trick](https://en.wikipedia.org/wiki/Kernel_method)
+
+Put data in higher dimension(s). 
+
+### Implementation
+
+##### Data
+
+```{r}
+head(iris)
+```
+
+##### Model
+
+```{r}
+library(e1071) # for svm()
+
+# simple model
+model = svm(Species ~., data = iris)
+summary(model)
+```
+
+Prediction (Warning: use test-train split and cv in real practice)
+
+```{r}
+pred.values = predict(model, iris[1:4])
+table(pred.values, iris[,5])
+```
+
+##### Parameter Tuning
+
+* Cost: allows svm to have a soft margins (a buffer instead of a boundary), aka allowing some data points to cross the hard margin, often leads to a better fit
+
+* Gamma:  
+  - related to non-linear kernel function
+  - for radial kernel, small gamma - guassian of large vaiance - influence of the support vector is larger (wide-spread); large - variance small - support vector does not have a wide-spread influence
+  - large gamma, small variance, high bias, small gamma, large variance, small bias
+
+```{r}
+# tune() function use a grid search
+tune.results = tune(method = svm, train.x = iris[1:4], train.y = iris[,5],
+                    kernel = "radial", 
+                    # ranges -> parameters to tune, in a list
+                    ranges = list(
+                      cost=c(0.1,1.5,10), 
+                      gamma=c(0.1,0.5,1,2)
+                                  )
+                    )
+```
+
+```{r}
+summary(tune.results)
+```
+
+The tuned model
+
+```{r}
+tuned.svm = svm(Species ~., data = iris, kernel = 'radial',
+                cost = 1.5, gamma = 0.1)
+tuned.svm
+```
+
+? Cost, Gamma

@@ -15,6 +15,8 @@ output:
 knitr::opts_chunk$set(echo = TRUE, warning=T, message = T, cache = T)
 ```
 
+(Note: adopted from *Data Scicence and Machine Learning Bootcamp with R* by *Jose Portilla* from Udemy) 
+
 ```{r}
 library(MASS)
 library(tibble)

@@ -94,3 +94,159 @@ server = function(input, output){}
 shinyApp(ui, server)
 ```
 
+More about icons: https://rstudio.github.io/shinydashboard/appearance.html#icons
+
+##### Dynamic Inputs
+
+Dynamic Inputs: Content is generated through the server
+
+```{r}
+## app.R ##
+library(shiny)
+library(shinydashboard)
+
+ui = dashboardPage(
+  ### setup dynamic rendering in ui###
+  dashboardHeader(dropdownMenuOutput("messageMenu")),
+  
+  
+  dashboardSidebar(),
+  dashboardBody()
+)
+
+server = function(input, output){
+  # messages, you need to design a streamline for information to flow in in reality
+  from.df = c("Human Resource", "Research", "Analytics")
+  message.df = c("Peer evaluation is almost due", 
+              "Check out these new findings", 
+              "Seasonal reports available")
+  messageData = data.frame(from.df, message.df)
+  
+  
+  output$messageMenu = renderMenu({
+    # Code to generate each of the messageItems here, in a list. This assumes
+  # that messageData is a data frame with two columns, 'from' and 'message'.
+    msgs = apply(messageData, 1, function(row){
+      messageItem(from = row[["from.df"]], message = row[["message.df"]])
+       })
+    
+    
+    # This is equivalent to calling:
+  #   dropdownMenu(type="messages", msgs[[1]], msgs[[2]], ...)
+  dropdownMenu(type = "message", .list = msgs)
+  })
+  
+  
+}
+
+shinyApp(ui, server)
+```
+
+For more dynamic content: 
+
+* https://shiny.rstudio.com/gallery/dynamic-ui.html
+* `?renderMenu`
+
+#### (notification menu)
+
+```{r}
+## app.R ##
+library(shiny)
+library(shinydashboard)
+
+ui = dashboardPage(
+  # setting header title
+  dashboardHeader(title = "My First Dashboard",
+                  
+                  ### notification menu ###
+                  dropdownMenu(type = "notification", 
+                               notificationItem(
+                                text = "5 new users today",
+                                icon("users")
+                               ),
+                               notificationItem(
+                                 text = "12 items delivered",
+                                 icon("truck"),
+                                 status = "success"
+                               ),
+                               notificationItem(
+                                 text = "Server load at 86%",
+                                 icon("exclamation-triangle"),
+                                 status = "warning"
+                               ))), 
+  
+  
+  dashboardSidebar(),
+  dashboardBody()
+)
+
+server = function(input, output){}
+
+shinyApp(ui, server)
+```
+
+For other status: https://rstudio.github.io/shinydashboard/appearance.html#statuses-and-colors
+
+#### Task Menu
+
+```{r}
+## app.R ##
+library(shiny)
+library(shinydashboard)
+
+ui = dashboardPage(
+  # setting header title
+  dashboardHeader(title = "My First Dashboard", 
+                  ### task menu ###
+                  dropdownMenu(type = "task", badgeStatus = "success",
+                               
+                               taskItem(text = "Documentation",
+                                        value = 90,
+                                        color = "green"),
+                               
+                               taskItem("Project X", 
+                                        17,
+                                        "aqua"),
+                               
+                               taskItem("Server deployment",
+                                        75,
+                                        "yellow"),
+                               
+                               taskItem("Overall project",
+                                        80,
+                                        "red"))),
+  
+  
+  dashboardSidebar(),
+  dashboardBody()
+)
+
+server = function(input, output){}
+
+shinyApp(ui, server)
+```
+
+Specify color
+
+* `?validColors`
+
+
+#### Disabling Header
+
+```{r}
+## app.R ##
+library(shiny)
+library(shinydashboard)
+
+ui = dashboardPage(
+  # setting header title
+  dashboardHeader(disable = T),
+  dashboardSidebar(),
+  dashboardBody()
+)
+
+server = function(input, output){}
+
+shinyApp(ui, server)
+```
+
