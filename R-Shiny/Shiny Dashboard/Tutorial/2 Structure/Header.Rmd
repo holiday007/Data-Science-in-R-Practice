@@ -1,0 +1,96 @@
+---
+title: "Shiny Dashboard - Super Basics"
+author: |
+  | Author: Holiday Tang 
+  | [LinkeDin](https://www.linkedin.com/in/holiday-t/) |  [GitHub](https://github.com/holiday007) | [Kaggle Novice](https://www.kaggle.com/holibae007)
+date: "| Date: `r Sys.Date()`"
+output:
+  github_document:
+    toc: true
+    fig_width: 7
+    fig_height: 5
+    toc_depth: 2
+    dev: png
+    pandoc_args: --webtex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, eval = F)
+
+# install packages
+packs = c("shiny", "shinydashboard")
+
+new.pkg <- packs[!(packs %in% installed.packages())]
+
+if (length(new.pkg)) {
+  install.packages(new.pkg, repos = "http://cran.rstudio.com")
+}
+```
+
+(Adopted from official shinydashboard tutorials: https://rstudio.github.io/shinydashboard/structure.html)
+
+## Header
+
+* Setting the title is simple; just use the `title` argument:
+
+```{r}
+## app.R ##
+library(shiny)
+library(shinydashboard)
+
+ui = dashboardPage(
+  # setting header title
+  dashboardHeader(title = "My First Dashboard"),
+  dashboardSidebar(),
+  dashboardBody()
+)
+
+server = function(input, output){}
+
+shinyApp(ui, server)
+```
+
+## 3 types of menus
+
+- message menu, notifications, tasks
+- created by `dropdownMenu()`
+
+#### Message Menu
+
+```{r}
+## app.R ##
+library(shiny)
+library(shinydashboard)
+
+ui = dashboardPage(
+  # add dropdown menu, key components are messageItem
+  # messageItem needs "from" and "message", "icon" and "time" are also available
+  # icon can be modified
+  dashboardHeader(title = "My First Dashboard",
+                  dropdownMenu(type = "messages",
+                  messageItem(
+                    from = "Sales Dept",
+                    message = "Sales are steady this month."
+                  ),
+                  messageItem(
+                    from = "New User",
+                    message = "How do I register?",
+                    icon = icon("question"),
+                    time = "13:45"
+                  ),
+                  messageItem(
+                    from = "Support",
+                    message = "The new server is ready.",
+                    icon = icon("life-ring"),
+                    time = "2014-12-01"
+                  )
+)),
+  dashboardSidebar(),
+  dashboardBody()
+)
+
+server = function(input, output){}
+
+shinyApp(ui, server)
+```
+
