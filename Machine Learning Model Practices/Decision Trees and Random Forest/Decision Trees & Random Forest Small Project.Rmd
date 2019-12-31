@@ -1,0 +1,159 @@
+---
+title: "Insert Title"
+author: |
+  | Author: Holiday Tang 
+  | [LinkeDin](https://www.linkedin.com/in/holiday-t/) |  [GitHub](https://github.com/holiday007) | [Kaggle Novice](https://www.kaggle.com/holibae007)
+date: "| Date: `r Sys.Date()`"
+output:
+  github_document:
+    toc: true
+    fig_width: 7
+    fig_height: 5
+    toc_depth: 2
+    dev: png
+    pandoc_args: --webtex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment=NA, cache=T)
+
+# install packages if necessary
+packs = c("ggplot2", "rpart", "randomForest", "caTools", "rpart.plot")
+
+new.pkg <- packs[!(packs %in% installed.packages())]
+
+if (length(new.pkg)) {
+  install.packages(new.pkg, repos = "http://cran.rstudio.com")
+}
+```
+
+# Tree Methods Project
+
+##### Data
+
+```{r}
+College = ISLR::College
+head(College)
+```
+
+```{r}
+# uncomment following line for data set description
+# ?ISLR::College
+```
+
+#### EDA
+
+**Explore data a little bit**
+
+Scatterplot of Grad.Rate versus Room.Board, colored by the Private column
+
+```{r}
+library(ggplot2)
+
+ggplot(College, aes(x=Room.Board, y=Grad.Rate, color=Private)) +
+  geom_point()
+```
+
+Histogram of graduation rate by private
+
+```{r}
+ggplot(College, aes(Grad.Rate)) + 
+  geom_histogram(aes(fill = Private), color = "black", bins = 50)
+```
+
+There is a college with an graduation rate above 100%, changing is to 100
+
+```{r}
+College[which(College$Grad.Rate > 100),]
+College[which(College$Grad.Rate > 100), 18] = 100
+```
+
+#### Train Test Split
+
+```{r}
+library(caTools)
+
+Split = sample.split(College$Private, SplitRatio = 0.7)
+train.data = subset(College, Split == T)
+test.data = subset(College, Split == F)
+
+# head(train.data)
+```
+
+#### Decision Tree
+
+Building model
+
+```{r}
+library(rpart)
+tree = rpart(Private ~ ., method = "class", data = train.data)
+
+# predict
+predicted.private = predict(tree, test.data)
+head(predicted.private)
+```
+
+```{r}
+predicted.private = data.frame(predicted.private)
+predicted.private$Private = predicted.private$Yes > predicted.private$No
+
+library(dplyr)
+predicted.private = predicted.private %>%
+  mutate(Private = ifelse(Private == T, "Yes", "No"))
+
+head(predicted.private)
+```
+
+Confusion Matrix
+```{r}
+tree.confusion = table(predicted.private$Private, test.data$Private)
+tree.confusion
+```
+
+Error rate
+```{r}
+(tree.confusion[1,2] + tree.confusion[2,1])/sum(tree.confusion)
+```
+
+Plot the tree
+```{r}
+library(rpart.plot)
+prp(tree, main = "Private or not")
+```
+
+#### Random Forest
+
+```{r}
+library(randomForest)
+
+rf.model = randomForest(Private ~ ., importance = T, data = train.data)
+
+rf.model
+```
+
+Model confusion matrix
+
+```{r}
+rf.model$confusion
+```
+
+```{r}
+rf.model$importance
+```
+
+Prediction
+
+```{r}
+rf.predict = predict(rf.model, test.data)
+
+rf.confusion = table(rf.predict, test.data$Private)
+
+rf.confusion
+```
+
+Error rate:
+
+```{r}
+(rf.confusion[1,2] + rf.confusion[2,1])/sum(rf.confusion)
+```
+
