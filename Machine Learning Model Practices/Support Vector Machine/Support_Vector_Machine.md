@@ -4,12 +4,18 @@ Author: Holiday Tang
 [LinkeDin](https://www.linkedin.com/in/holiday-t/) |
 [GitHub](https://github.com/holiday007) | [Kaggle
 Novice](https://www.kaggle.com/holibae007)
+<<<<<<< HEAD
 | Date: 2020-01-01
 
   - [Support Vector Machine](#support-vector-machine)
       - [Non-linear separation? Use “Kernel
         Trick”](#non-linear-separation-use-kernel-trick)
       - [Implementation](#implementation)
+=======
+| Date: 2019-12-31
+
+  - [Support Vector Machine](#support-vector-machine)
+>>>>>>> 758c42010212dfbbb9354ec365dde58e8a588290
 
 (Note: adopted from *Data Scicence and Machine Learning Bootcamp with R*
 by *Jose Portilla* from Udemy)
@@ -25,13 +31,17 @@ clear gap that is as wide as possible. New examples are then mapped to
 the established space, and predicted to belong to a category based on
 which side the gap they fall on.
 
+<<<<<<< HEAD
   - Non-probabilistic based
   - binary linear classifier
 
+=======
+>>>>>>> 758c42010212dfbbb9354ec365dde58e8a588290
 Imagine the labeled traning data below:
 
 ![](C:\\Users\\Dell\\Pictures\\Random\\Capture.JPG)
 
+<<<<<<< HEAD
 We can intuitively draw an hyperplane to separate the two classes,
 however, there are many possible ways to do it:
 
@@ -202,3 +212,7 @@ Number of Support Vectors:  50
 ```
 
 ? Cost, Gamma
+=======
+  - Non-probabilistic based
+  - binary linear classifier
+>>>>>>> 758c42010212dfbbb9354ec365dde58e8a588290

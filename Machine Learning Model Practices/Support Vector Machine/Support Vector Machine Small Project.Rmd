@@ -1,0 +1,163 @@
+---
+title: "Support Vector Machine Small Project"
+author: |
+  | Author: Holiday Tang 
+  | [LinkeDin](https://www.linkedin.com/in/holiday-t/) |  [GitHub](https://github.com/holiday007) | [Kaggle Novice](https://www.kaggle.com/holibae007)
+date: "| Date: `r Sys.Date()`"
+output:
+  github_document:
+    toc: true
+    fig_width: 7
+    fig_height: 5
+    toc_depth: 2
+    dev: png
+    pandoc_args: --webtex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment=NA, cache=T)
+
+# install packages
+packs = c("ggplot2", "caTools", "e1071")
+
+new.pkg <- packs[!(packs %in% installed.packages())]
+
+if (length(new.pkg)) {
+  install.packages(new.pkg, repos = "http://cran.rstudio.com")
+}
+
+
+```
+
+# Project Overview Leading Club 2016
+
+Leading Club connect investors and investees 
+
+Data contains a series of variables, one of which is whether the borrower paid back their loan in full.
+
+**Project Goal**: Build a model that predict and classify whether a borrow paid back in full.
+
+Variables: 
+
+* credit.policy: 1 if the customer meets the credit underwriting criteria of LendingClub.com, and 0 otherwise.
+* purpose: The purpose of the loan (takes values "credit_card", "debt_consolidation", "educational", "major_purchase", "small_business", and "all_other").
+* int.rate: The interest rate of the loan, as a proportion (a rate of 11% would be stored as 0.11). Borrowers judged by LendingClub.com to be more risky are assigned higher interest rates.
+* installment: The monthly installments owed by the borrower if the loan is funded.
+* log.annual.inc: The natural log of the self-reported annual income of the borrower.
+* dti: The debt-to-income ratio of the borrower (amount of debt divided by annual income).
+* fico: The FICO credit score of the borrower.
+* days.with.cr.line: The number of days the borrower has had a credit line.
+* revol.bal: The borrower's revolving balance (amount unpaid at the end of the credit card billing cycle).
+* revol.util: The borrower's revolving line utilization rate (the amount of the credit line used relative to total credit available).
+* inq.last.6mths: The borrower's number of inquiries by creditors in the last 6 months.
+* delinq.2yrs: The number of times the borrower had been 30+ days past due on a payment in the past 2 years.
+* pub.rec: The borrower's number of derogatory public records (bankruptcy filings, tax liens, or judgments).
+
+### Data
+
+##### Data Overview
+
+**Stucture**
+
+```{r}
+loans = read.csv("loan_data.csv")
+str(loans)
+```
+
+**Summary**
+
+```{r}
+summary
+```
+
+Convert some variables to categorical variable
+
+```{r}
+loans$credit.policy = factor(loans$credit.policy)
+loans$not.fully.paid = factor(loans$not.fully.paid)
+```
+
+### A bit of EDA
+
+```{r}
+library(ggplot2)
+ggplot(loans, aes(fico)) + 
+  geom_histogram(aes(fill = not.fully.paid), color = "black") + 
+  ggtitle("fico score")
+```
+
+```{r}
+ggplot(loans, aes(purpose)) + 
+  geom_bar(aes(fill=not.fully.paid), position = "dodge", color="black") + 
+  ggtitle("Purpose") + 
+  theme(axis.text.x=element_text(angle = 90))
+```
+
+```{r}
+ggplot(loans, aes(x=int.rate, y=fico, color=not.fully.paid)) +
+  geom_point(alpha = 0.2) + 
+  geom_smooth()
+  ggtitle("Interest Rate vs. FICO Credit Score")
+```
+
+Higher interest rate for lower credit score, makes sense.
+
+### Model
+
+Train-test split
+
+```{r}
+library(caTools)
+
+Split = sample.split(loans$not.fully.paid, SplitRatio = 0.7)
+train = subset(loans, Split == T)
+test = subset(loans, Split == F)
+```
+
+```{r}
+library(e1071)
+SVM = svm(not.fully.paid ~., data = train)
+summary(SVM)
+```
+
+Prediction
+
+```{r}
+pred.values = predict(SVM, test)
+table(pred.values, test$not.fully.paid)
+```
+
+Very high false negative rate. Not paid back predicted as paid back.
+
+### Tuning parameters
+
+cost & gamma
+
+```{r, eval=F}
+tune.result = tune(svm, train.x = not.fully.paid ~ ., data = train,
+                   kernel = 'radial', 
+                   ranges = list(cost=c(0.1,0.5,1,2),
+                                gamma=c(0.1,0.25,0.75,1)))
+```
+
+```{r, eval=F}
+tune.result
+```
+
+Takes forever to run, so I didn't include the process, but the outcome is cost = 1, and gamma = 0.75 for the values I tested
+
+Final model:
+
+```{r}
+final.model = svm(not.fully.paid ~ ., cost = 1, gamma = 0.75, data = train)
+```
+
+Prediction by final model
+
+```{r}
+final.pred = predict(final.model, test)
+table(final.pred, test$not.fully.paid)
+```
+
+Still very bad performance lol, better tune other values or use other models.
+
