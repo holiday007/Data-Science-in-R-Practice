@@ -1,39 +1,24 @@
----
-title: "Shiny Dashboard - Header"
-author: |
-  | Author: Holiday Tang 
-  | [LinkeDin](https://www.linkedin.com/in/holiday-t/) |  [GitHub](https://github.com/holiday007) | [Kaggle Novice](https://www.kaggle.com/holibae007)
-date: "| Date: `r Sys.Date()`"
-output:
-  github_document:
-    toc: true
-    fig_width: 7
-    fig_height: 5
-    toc_depth: 2
-    dev: png
-    pandoc_args: --webtex
----
+Shiny Dashboard - Header
+================
+Author: Holiday Tang  
+[LinkeDin](https://www.linkedin.com/in/holiday-t/) |
+[GitHub](https://github.com/holiday007) | [Kaggle
+Novice](https://www.kaggle.com/holibae007)
+| Date: 2020-01-01
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, eval = F)
+  - [Header](#header)
+  - [3 types of menus](#types-of-menus)
 
-# install packages
-packs = c("shiny", "shinydashboard")
-
-new.pkg <- packs[!(packs %in% installed.packages())]
-
-if (length(new.pkg)) {
-  install.packages(new.pkg, repos = "http://cran.rstudio.com")
-}
-```
-
-(Adopted from official shinydashboard tutorials: https://rstudio.github.io/shinydashboard/structure.html)
+(Adopted from official shinydashboard tutorials:
+<https://rstudio.github.io/shinydashboard/structure.html>)
 
 ## Header
 
-* Setting the title is simple; just use the `title` argument:
+  - Setting the title is simple; just use the `title` argument:
 
-```{r}
+<!-- end list -->
+
+``` r
 ## app.R ##
 library(shiny)
 library(shinydashboard)
@@ -52,12 +37,12 @@ shinyApp(ui, server)
 
 ## 3 types of menus
 
-- message menu, notifications, tasks
-- created by `dropdownMenu()`
+  - message menu, notifications, tasks
+  - created by `dropdownMenu()`
 
 #### Message Menu
 
-```{r}
+``` r
 ## app.R ##
 library(shiny)
 library(shinydashboard)
@@ -94,13 +79,14 @@ server = function(input, output){}
 shinyApp(ui, server)
 ```
 
-More about icons: https://rstudio.github.io/shinydashboard/appearance.html#icons
+More about icons:
+<https://rstudio.github.io/shinydashboard/appearance.html#icons>
 
 ##### Dynamic Inputs
 
 Dynamic Inputs: Content is generated through the server
 
-```{r}
+``` r
 ## app.R ##
 library(shiny)
 library(shinydashboard)
@@ -142,14 +128,14 @@ server = function(input, output){
 shinyApp(ui, server)
 ```
 
-For more dynamic content: 
+For more dynamic content:
 
-* https://shiny.rstudio.com/gallery/dynamic-ui.html
-* `?renderMenu`
+  - <https://shiny.rstudio.com/gallery/dynamic-ui.html>
+  - `?renderMenu`
 
 #### (notification menu)
 
-```{r}
+``` r
 ## app.R ##
 library(shiny)
 library(shinydashboard)
@@ -185,11 +171,12 @@ server = function(input, output){}
 shinyApp(ui, server)
 ```
 
-For other status: https://rstudio.github.io/shinydashboard/appearance.html#statuses-and-colors
+For other status:
+<https://rstudio.github.io/shinydashboard/appearance.html#statuses-and-colors>
 
 #### Task Menu
 
-```{r}
+``` r
 ## app.R ##
 library(shiny)
 library(shinydashboard)
@@ -228,11 +215,11 @@ shinyApp(ui, server)
 
 Specify color
 
-* `?validColors`
+  - `?validColors`
 
 #### Putting it all together
 
-```{r}
+``` r
 library(shiny)
 library(shinydashboard)
 
@@ -307,10 +294,9 @@ server = function(input, output){}
 shinyApp(ui, server)
 ```
 
-
 #### Disabling Header
 
-```{r}
+``` r
 ## app.R ##
 library(shiny)
 library(shinydashboard)
@@ -326,4 +312,3 @@ server = function(input, output){}
 
 shinyApp(ui, server)
 ```
-

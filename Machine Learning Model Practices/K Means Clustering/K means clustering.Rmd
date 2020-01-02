@@ -1,0 +1,98 @@
+---
+title: "K Means Clustering"
+author: |
+  | Author: Holiday Tang 
+  | [LinkeDin](https://www.linkedin.com/in/holiday-t/) |  [GitHub](https://github.com/holiday007) | [Kaggle Novice](https://www.kaggle.com/holibae007)
+date: "| Date: `r Sys.Date()`"
+output:
+  github_document:
+    toc: true
+    fig_width: 7
+    fig_height: 5
+    toc_depth: 2
+    dev: png
+    pandoc_args: --webtex
+---
+
+(Note: adopted from *Data Scicence and Machine Learning Bootcamp with R* by *Jose Portilla* from Udemy) 
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment=NA, cache=T)
+
+# install packages
+packs = c("ggplot2", "cluster")
+
+new.pkg <- packs[!(packs %in% installed.packages())]
+
+if (length(new.pkg)) {
+  install.packages(new.pkg, repos = "http://cran.rstudio.com")
+}
+```
+
+# What is K means clustering?
+
+Unsupervised learning algorithm that attempt tp group similar clusters together in your data.
+
+What is it commonly used for?
+
+* Cluster similar documents
+* Cluster customers based on features
+* Market segmentation
+
+The overall goal is to divide data into distinct groups such that obervations within each group are similar.
+
+**Algorithm overview:**
+
+* Choose a number of clusters "K"
+* Randomly assigned each point to a cluster
+* Repeat the following:
+  - For each cluster, compute the cluster centroid by taking the **mean vector** of points in the cluster
+  - Assign each data point to the cluster for which the centroid is the closest
+  - Stop repetition when the clusters stop changing
+  
+**Choosing a "k" value"**
+
+* No easy answer
+* A common way is the elbow method:
+  1. compute the sum of squared error (SSE) for some values of "k" (SSE is defined as the sum of squared distance between cluster members and their centroid)
+  2. If you plot k against the SSE, you will see that the error decreases as k gets larger; larger k -> smaller clusters, smaller clusters, smaller variance (when the algorithm is done) -> smaller error, an extreme case is when k = n(sample size), the clusters will have 0 error
+  3. choose a k which the SSE decrease abruptly (capturing the most variance with a unit increment of the parameter), this creates an "elbow effect":
+  
+  ![ ](C:/Users/Dell/Pictures/Random/Capture4.JPG)
+  
+# Implementation
+
+Data - Iris data set
+
+```{r}
+head(iris)
+```
+
+```{r}
+library(ggplot2)
+pl = ggplot(iris, aes(Petal.Length, Petal.Width, color = Species))
+
+pl + geom_point(size=4)
+```
+
+Model  
+  
+```{r}
+set.seed(101)
+
+irisCluster = kmeans(x=iris[,1:4], centers = 3, nstart = 20)
+
+irisCluster
+```
+
+Clustering outcomes compared to original label
+
+```{r}
+table(irisCluster$cluster, iris$Species)
+```
+
+```{r}
+cluster::clusplot(iris, irisCluster$cluster, color = T, shade = T,
+                  labels = 0, lines = 0)
+```
+
