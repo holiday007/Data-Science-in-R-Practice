@@ -1,7 +1,6 @@
 base
-methods
-datasets
-utils
-grDevices
-graphics
-stats
+twitteR
+NLP
+tm
+RColorBrewer
+wordcloud

@@ -20,7 +20,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment=NA, cache=T)
 
 # install packages
-packs = c()
+packs = c("tm", "twitteR", "wordcloud", "RColorBrewer", "e1017", "class")
 
 new.pkg <- packs[!(packs %in% installed.packages())]
 
@@ -75,10 +75,97 @@ $$
 The tf–idf value increases proportionally to the number of times a word appears in the document and is offset by the number of documents in the corpus that contain the word, which helps to adjust for the fact that some words appear more frequently in general.
 
 ```{r}
+library(twitteR)
+library(tm)
+library(wordcloud)
+library(RColorBrewer)
+```
 
+Connect to twitter
+
+```{r}
+ckey = "A7pB8aV2Gf7cTDjJDjBsmXCBY"
+cskey = "lEwtyOQUq7rePc8XDIxnjC1oyxbuL3vcVkygsb499BMAk0jBR7"
+token = "1183026577715744769-4cyyVR2UaJ4SBoSFcCcnqR0rzkJvWR"
+sec.token = "K8rB8j9QxUVfChcqNJES4MydbV85rihzHbG0YkJZno0Rw"
+setup_twitter_oauth(ckey, cskey, token, sec.token) # set up authorization
+```
+
+Search twitters
+
+```{r}
+# returning tweets
+soccer.tweets = searchTwitter("soccer", 
+                              n = 1000,
+                              lang = "en")
+```
+
+```{r}
+soccer.tweets[1:5]
+```
+
+```{r}
+# grabbing text data from tweets
+soccer.text = sapply(soccer.tweets, function(x) x$getText())
+```
+
+```{r}
+soccer.text[1:5]
+```
+
+Clean Text Data (remove emoticons)
+
+```{r}
+# iconv() - an encoding function
+soccer.text = iconv(soccer.text, 'UTF-8', "ASCII") # remove emoticons and characters that are not in utf8
+soccer.text[1:5]
+```
+
+Create a corpus
+
+```{r}
+# VectorSource - creates a vector source from the text data
+soccer.corpus = Corpus(VectorSource(soccer.text))
+```
+
+```{r}
+soccer.corpus
 ```
 
 
-...package
+Document term matrix
 
-""
+```{r}
+term.doc.matrix = TermDocumentMatrix(soccer.corpus,
+            # control - a list of actions to do on every document in the corpus
+                                     control = list(removePunctuation = T,
+            # stop words - really common words that do not add a lot of info, basically removing them here
+                                                    stopwords = c("soccer",
+                                                                  stopwords("en")),
+                                                    removeNumbers = T, 
+                                                    tolower=T))
+```
+
+Convert Term Document Matrix into an actual matrix
+
+```{r}
+term.doc.matrix = as.matrix(term.doc.matrix)
+term.doc.matrix[1:3,1:3]
+```
+
+Get the word counts
+
+```{r}
+word.freq = sort(rowSums(term.doc.matrix), decreasing = T)
+word.freq[1:5]
+```
+
+```{r}
+dm = data.frame(word = names(word.freq), freq = word.freq)
+```
+
+Create the word cloud
+
+```{r}
+wordcloud(dm$word,dm$freq, random.order = FALSE, colors = brewer.pal(8, "Dark2"))
+```

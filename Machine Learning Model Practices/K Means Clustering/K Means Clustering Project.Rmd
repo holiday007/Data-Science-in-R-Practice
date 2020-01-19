@@ -1,0 +1,117 @@
+---
+title: "K Means Clustering Small Project"
+author: |
+  | Author: Holiday Tang 
+  | [LinkeDin](https://www.linkedin.com/in/holiday-t/) |  [GitHub](https://github.com/holiday007) | [Kaggle Novice](https://www.kaggle.com/holibae007)
+date: "| Date: `r Sys.Date()`"
+output:
+  github_document:
+    toc: true
+    fig_width: 7
+    fig_height: 5
+    toc_depth: 2
+    dev: png
+    pandoc_args: --webtex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, comment=NA, cache=T)
+
+# install packages
+packs = c("ggplot2")
+
+new.pkg <- packs[!(packs %in% installed.packages())]
+
+if (length(new.pkg)) {
+  install.packages(new.pkg, repos = "http://cran.rstudio.com")
+}
+```
+
+# Data
+
+* Read wine quality and white wine quality from [UCI Repository](http://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/)
+
+```{r}
+df1 = read.csv("winequality-red.csv", sep = ";")
+df2 = read.csv("winequality-white.csv", sep = ";")
+
+head(df1)
+head(df2)
+```
+
+```{r}
+df1$label = "red"
+```
+
+```{r}
+df2$label = "white"
+```
+
+```{r}
+head(df1)
+head(df2)
+```
+
+```{r}
+df = rbind(df1,df2)
+dim(df1)
+dim(df2)
+dim(df)
+```
+
+```{r}
+str(df)
+```
+
+# EDA
+
+**Residual Sugar**
+
+```{r}
+library(ggplot2)
+
+ggplot(df, aes(x = residual.sugar)) + 
+  geom_histogram(aes(fill = label), color = "black", bins = 50, 
+                 position = "identity", alpha=0.2)
+```
+
+```{r}
+ggplot(df, aes(x = citric.acid)) + 
+  geom_histogram(aes(fill = label), color = "black", bins = 50, position = "identity", alpha = 0.4)
+```
+
+```{r}
+ggplot(df, aes(x = alcohol)) + 
+  geom_histogram(aes(fill = label), color = "black", bins = 50, position = "identity", alpha = 0.4)
+```
+
+```{r}
+ggplot(df, aes(x = residual.sugar, y = citric.acid)) + 
+  geom_point(aes(color = label), alpha=0.1)
+```
+
+```{r}
+ggplot(df, aes(x = residual.sugar, y = volatile.acidity)) + 
+  geom_point(aes(color = label), alpha=0.1)
+```
+
+**Grab data withoout label**
+
+
+```{r}
+clus.data = df[,-13]
+head(clus.data)
+```
+
+```{r}
+wine.cluster = kmeans(x = clus.data, centers = 2, nstart = 25)
+```
+
+```{r}
+wine.cluster$centers
+```
+
+```{r}
+table(factor(df$label, levels = c("white", "red")), wine.cluster$cluster)
+```
+
